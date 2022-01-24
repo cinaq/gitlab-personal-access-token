@@ -1,5 +1,6 @@
 import base64
 import hashlib
+from datetime import datetime
 import psycopg2
 import os
 
@@ -41,11 +42,12 @@ def get_id(conn, user_id, token_digest):
 
 def create_pat(conn, user_id, user_scopes, token_digest):
     with conn.cursor() as cursor:
+        now = datetime.now()
         cursor.execute(
             """INSERT INTO personal_access_tokens 
-                (name, impersonation, scopes, revoked, user_id, token_digest)
-                VALUES  (%s, %s, %s, %s, %s, %s)""",
-            (api_name, False, user_scopes, False, user_id, token_digest)
+                (name, impersonation, scopes, revoked, user_id, token_digest, created_at, updated_at, expire_notification_delivered, after_expiry_notification_delivered)
+                VALUES  (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            (api_name, False, user_scopes, False, user_id, token_digest, now, now, False, False)
         )
 
 connect_str = f"dbname='{pg_dbname}' user='{pg_username}' host='{pg_host}' password='{pg_password}' port='{pg_port}'"
