@@ -25,6 +25,9 @@ user_id = int(os.environ.get('USER_ID', 1))
 user_scopes = os.environ.get('USER_SCOPES', default_scopes)
 api_name = os.environ.get('API_NAME', "Managed by CINAQ gitlab-personal-access-token")
 
+if len(api_key) != 20:
+    raise Exception("API_KEY must be exactly 20 characters long")
+
 token_digest = base64.b64encode(hashlib.sha256((api_key + db_key_base[:32]).encode('utf-8')).digest()).decode('utf-8')
 
 
