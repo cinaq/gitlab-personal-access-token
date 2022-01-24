@@ -20,7 +20,7 @@ pg_port = os.environ.get('PG_PORT')
 pg_username = os.environ.get('PG_USERNAME')
 pg_password = os.environ.get('PG_PASSWORD')
 api_key = os.environ.get('API_KEY')
-user_id = os.environ.get('USER_ID', 1)
+user_id = int(os.environ.get('USER_ID', 1))
 user_scope = os.environ.get('USER_SCOPE', default_scope)
 
 token_digest = base64.b64encode(hashlib.sha256((api_key + db_key_base[:32]).encode('utf-8')).digest()).decode('utf-8')
@@ -37,7 +37,7 @@ def get_id(conn, user_id, token_digest):
 
 def create_pat(conn, user_id, user_scope, token_digest):
     with conn.cursor() as cursor:
-        cursor.execute("""INSERT INTO personal_access_tokens (impersonation, scope, revoked, user_id, token_digest) VALUES  (%s, %s, %s, %s, %s)""", (False, user_scope, False, user_id, token_digest))
+        cursor.execute("""INSERT INTO personal_access_tokens (impersonation, scope, revoked, user_id, token_digest) VALUES  (%s, %s, %s, %d, %s)""", (False, user_scope, False, user_id, token_digest))
 
 try:
     connect_str = f"dbname='{pg_dbname}' user='{pg_username}' host='{pg_host}' password='{pg_password}' port='{pg_port}'"
